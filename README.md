@@ -12,4 +12,3 @@ Para un mejor manejo de las clases, la implementación se realizó haciendo uso 
 - model: Definición de clases que mapean las entidades de la base de datos
 - resource: Definición de endpoints
 - service: Definición de lógica del negocio
-
