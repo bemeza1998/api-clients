@@ -14,8 +14,8 @@ import lombok.Setter;
 @EqualsAndHashCode(callSuper = false)
 public class Cliente extends Persona{
 
-    @Column(name = "ID_CLIENTE", length = 8, nullable = false)
-    private String idCliente;
+    @Column(name = "ID_CLIENTE", nullable = false)
+    private Long idCliente;
 
     @Column(name = "CONTRASENA", length = 30, nullable = false)
     private String contrasena;

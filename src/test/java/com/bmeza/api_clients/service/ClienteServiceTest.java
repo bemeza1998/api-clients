@@ -38,14 +38,13 @@ public class ClienteServiceTest {
     @BeforeEach
     void setUp() {
         cliente = new Cliente();
-        cliente.setId(1L);
         cliente.setNombre("Bryan Meza");
         cliente.setGenero("M");
         cliente.setEdad(26);
         cliente.setIdentificacion("1727432534");
         cliente.setDireccion("Quitumbe");
         cliente.setTelefono("2845410");
-        cliente.setIdCliente("CL-00003");
+        cliente.setIdPersona("CL-00003");
         cliente.setContrasena("passwd");
         cliente.setEstado(EstadoClienteEnum.ACTIVO.getValor());
     }
@@ -63,11 +62,11 @@ public class ClienteServiceTest {
     @Test
     public void buscarCliente_clienteExistente_retornarCliente() throws Exception {
 
-        when(repository.findByIdCliente(cliente.getIdCliente())).thenReturn(Optional.of(cliente));
+        when(repository.findByIdPersona(cliente.getIdPersona())).thenReturn(Optional.of(cliente));
 
-        Cliente clienteEncontrado = clienteService.buscarCliente(cliente.getIdCliente());
+        Cliente clienteEncontrado = clienteService.buscarCliente(cliente.getIdPersona());
 
-        verify(repository).findByIdCliente(cliente.getIdCliente());
+        verify(repository).findByIdPersona(cliente.getIdPersona());
 
         assertEquals(clienteEncontrado, cliente);
     }
@@ -75,10 +74,10 @@ public class ClienteServiceTest {
     @Test
     public void buscarCliente_clienteNoExistente_lanzarNotFoundException() throws Exception {
 
-        when(repository.findByIdCliente(cliente.getIdCliente())).thenReturn(Optional.empty());
-        assertThrows(NotFoundException.class, () -> clienteService.buscarCliente(cliente.getIdCliente()));
+        when(repository.findByIdPersona(cliente.getIdPersona())).thenReturn(Optional.empty());
+        assertThrows(NotFoundException.class, () -> clienteService.buscarCliente(cliente.getIdPersona()));
 
-        verify(repository).findByIdCliente(cliente.getIdCliente());
+        verify(repository).findByIdPersona(cliente.getIdPersona());
     }
 
     @Test
@@ -86,12 +85,12 @@ public class ClienteServiceTest {
 
         cliente.setEstado(EstadoClienteEnum.ACTIVO.getValor());
 
-        when(repository.findByIdCliente(cliente.getIdCliente())).thenReturn(Optional.of(cliente));
+        when(repository.findByIdPersona(cliente.getIdPersona())).thenReturn(Optional.of(cliente));
 
-        Boolean resultado = clienteService.buscarClienteActivo(cliente.getIdCliente());
+        Boolean resultado = clienteService.buscarClienteActivo(cliente.getIdPersona());
 
         assertTrue(resultado);
-        verify(repository, times(1)).findByIdCliente(cliente.getIdCliente());
+        verify(repository, times(1)).findByIdPersona(cliente.getIdPersona());
     }
 
     @Test
@@ -99,32 +98,29 @@ public class ClienteServiceTest {
 
         cliente.setEstado(EstadoClienteEnum.BLOQUEADO.getValor());
 
-        when(repository.findByIdCliente(cliente.getIdCliente())).thenReturn(Optional.of(cliente));
+        when(repository.findByIdPersona(cliente.getIdPersona())).thenReturn(Optional.of(cliente));
 
         CustomerNotActiveException exception = assertThrows(CustomerNotActiveException.class, 
-            () -> clienteService.buscarClienteActivo((cliente.getIdCliente())));
+            () -> clienteService.buscarClienteActivo((cliente.getIdPersona())));
 
         assertEquals("El cliente Bryan Meza no puede realizar transacciones.", exception.getMessage());
-        verify(repository, times(1)).findByIdCliente((cliente.getIdCliente()));
+        verify(repository, times(1)).findByIdPersona((cliente.getIdPersona()));
 
     }
 
     @Test
     public void modificarCliente_clienteExistente_actualizarCliente() throws Exception {
 
-        Long id = 1L;
-
-        cliente.setId(id);
         cliente.setNombre("Esteban");
         cliente.setDireccion("Cuenca");
         cliente.setEdad(33);
 
 
-        when(repository.findById(id)).thenReturn(Optional.of(new Cliente()));
+        when(repository.findByIdPersona(cliente.getIdPersona())).thenReturn(Optional.of(new Cliente()));
 
         clienteService.modificarCliente(cliente);
         
-        verify(repository).findById(id);
+        verify(repository).findByIdPersona(cliente.getIdPersona());
 
         ArgumentCaptor<Cliente> clienteCaptor = ArgumentCaptor.forClass(Cliente.class);
         verify(repository).save(clienteCaptor.capture());
@@ -139,11 +135,11 @@ public class ClienteServiceTest {
     @Test
     public void eliminarCliente_clienteExistente_eliminarCliente() throws Exception {
 
-        when(repository.findByIdCliente(cliente.getIdCliente())).thenReturn(Optional.of(new Cliente()));
+        when(repository.findByIdPersona(cliente.getIdPersona())).thenReturn(Optional.of(new Cliente()));
 
-        clienteService.eliminarCliente(cliente.getIdCliente());
+        clienteService.eliminarCliente(cliente.getIdPersona());
 
-        verify(repository).findByIdCliente(cliente.getIdCliente());
+        verify(repository).findByIdPersona(cliente.getIdPersona());
         verify(repository).delete(any(Cliente.class));
     }
 }

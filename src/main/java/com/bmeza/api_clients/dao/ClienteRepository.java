@@ -6,12 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.bmeza.api_clients.model.Cliente;
 
-public interface ClienteRepository extends JpaRepository<Cliente, Long>{
+public interface ClienteRepository extends JpaRepository<Cliente, String>{
 
-    Optional<Cliente> findByIdCliente(String idCliente);
+    Optional<Cliente> findByIdPersona(String idPersona);
 
-    Optional<Cliente> findByIdClienteAndEstado(String idCliente, String estado);
-
-    Optional<Cliente> findByIdentificacionOrIdCliente(String identificacion, String idCliente);
+    Optional<Cliente> findByIdentificacionOrIdPersonaOrIdCliente(String identificacion, String idPersona, Long idCliente);
 
 }

@@ -19,43 +19,44 @@ public class ClienteService {
 
     private final ClienteRepository repository;
 
-    public void crearCliente(Cliente cliente){
-        
-        Optional<Cliente> clienteExistente = this.repository.findByIdentificacionOrIdCliente(cliente.getIdentificacion(), cliente.getIdCliente());
+    public void crearCliente(Cliente cliente) {
+
+        Optional<Cliente> clienteExistente = this.repository.findByIdentificacionOrIdPersonaOrIdCliente(
+                cliente.getIdentificacion(), cliente.getIdPersona(), cliente.getIdCliente());
         if (!clienteExistente.isPresent()) {
             this.repository.save(cliente);
         } else {
-            throw new ExistingClientException("El cliente con cédula " + cliente.getIdentificacion() + " o " + cliente.getIdCliente() + " ya existe");
+            throw new ExistingClientException("Ya existe un cliente con uno de los siguientes datos: "
+                    + cliente.getIdentificacion() + ", " + cliente.getIdPersona() + " o id cliente " + cliente.getIdCliente());
         }
 
     }
 
-    public Cliente buscarCliente(String idCliente){
-        Optional<Cliente> clienteOpt = this.repository.findByIdCliente(idCliente);
+    public Cliente buscarCliente(String idPersona) {
+        Optional<Cliente> clienteOpt = this.repository.findByIdPersona(idPersona);
         return clienteOpt.orElseThrow(
-            () -> new NotFoundException("Cliente no encontrado")
-        );
+                () -> new NotFoundException("Cliente no encontrado"));
     }
 
-    public Boolean buscarClienteActivo(String idCliente){
-        Cliente cliente = this.buscarClientePorIdCliente(idCliente);
+    public Boolean buscarClienteActivo(String IdPersona) {
+        Cliente cliente = this.buscarClientePorIdPersona(IdPersona);
         if (cliente.getEstado().equals(EstadoClienteEnum.ACTIVO.getValor())) {
             return true;
         } else {
-            throw new CustomerNotActiveException("El cliente " + cliente.getNombre() + " no puede realizar transacciones." );
+            throw new CustomerNotActiveException(
+                    "El cliente " + cliente.getNombre() + " no puede realizar transacciones.");
         }
 
     }
 
-    private Cliente buscarClientePorIdCliente(String idCliente){
-        Optional<Cliente> clienteOpt = this.repository.findByIdCliente(idCliente);
+    private Cliente buscarClientePorIdPersona(String IdPersona) {
+        Optional<Cliente> clienteOpt = this.repository.findByIdPersona(IdPersona);
         return clienteOpt.orElseThrow(
-            () -> new NotFoundException("Cliente no encontrado")
-        );
-    } 
+                () -> new NotFoundException("Cliente no encontrado"));
+    }
 
-    public void modificarCliente(Cliente cliente){
-        Optional<Cliente> clienteOpt = this.repository.findById(cliente.getId());
+    public void modificarCliente(Cliente cliente) {
+        Optional<Cliente> clienteOpt = this.repository.findByIdPersona(cliente.getIdPersona());
         if (clienteOpt.isPresent()) {
             Cliente clienteBd = clienteOpt.get();
             clienteBd.setNombre(cliente.getNombre());
@@ -64,7 +65,6 @@ public class ClienteService {
             clienteBd.setIdentificacion(cliente.getIdentificacion());
             clienteBd.setDireccion(cliente.getDireccion());
             clienteBd.setTelefono(cliente.getTelefono());
-            clienteBd.setIdCliente(cliente.getIdCliente());
             clienteBd.setContrasena(cliente.getContrasena());
             clienteBd.setEstado(cliente.getEstado());
 
@@ -75,13 +75,13 @@ public class ClienteService {
 
     }
 
-    public void eliminarCliente(String idCliente){
-        Optional<Cliente> clienteOpt = this.repository.findByIdCliente(idCliente);
+    public void eliminarCliente(String idPersona) {
+        Optional<Cliente> clienteOpt = this.repository.findByIdPersona(idPersona);
         if (clienteOpt.isPresent()) {
             this.repository.delete(clienteOpt.get());
         } else {
             throw new NotFoundException("Cliente no encontrado");
         }
     }
-    
+
 }

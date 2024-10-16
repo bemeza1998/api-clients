@@ -34,18 +34,16 @@ class ClienteResourceTest {
     private Cliente cliente;
     private ObjectMapper objectMapper;
 
-
     @BeforeEach
     void setUp() {
         cliente = new Cliente();
-        cliente.setId(1L);
         cliente.setNombre("Bryan Meza");
         cliente.setGenero("M");
         cliente.setEdad(26);
         cliente.setIdentificacion("1727432534");
         cliente.setDireccion("Quitumbe");
         cliente.setTelefono("2845410");
-        cliente.setIdCliente("CL-00003");
+        cliente.setIdPersona("CL-00003");
         cliente.setContrasena("passwd");
         cliente.setEstado("ACT");
 
@@ -62,7 +60,7 @@ class ClienteResourceTest {
                 .content(clienteJson)).andReturn();
 
         verify(clienteService, times(1)).crearCliente(any(Cliente.class));
-        
+
         assertEquals(200, mvcResult.getResponse().getStatus());
     }
 
@@ -71,8 +69,8 @@ class ClienteResourceTest {
 
         when(clienteService.buscarCliente("CL-00003")).thenReturn(cliente);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/clientes")
-                .param("idCliente", "CL-00003")).andReturn();
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/clientes/" + cliente.getIdPersona()))
+                .andReturn();
 
         verify(clienteService, times(1)).buscarCliente("CL-00003");
 
@@ -84,8 +82,8 @@ class ClienteResourceTest {
 
         when(clienteService.buscarCliente("CL-00003")).thenThrow(new NotFoundException("Cliente no encontrado"));
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/clientes")
-                .param("idCliente", "CL-00003")).andReturn();
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/api/clientes/" + cliente.getIdPersona()))
+                .andReturn();
 
         verify(clienteService, times(1)).buscarCliente("CL-00003");
 
@@ -97,7 +95,7 @@ class ClienteResourceTest {
 
         String clienteJson = objectMapper.writeValueAsString(cliente);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.patch("/api/clientes")
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.put("/api/clientes")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(clienteJson)).andReturn();
 
@@ -110,9 +108,8 @@ class ClienteResourceTest {
     @Test
     void eliminarCliente_RetornarOk() throws Exception {
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.delete("/api/clientes")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("CL-00003")).andReturn();
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.delete("/api/clientes/eliminar/" + cliente.getIdPersona())
+                .contentType(MediaType.APPLICATION_JSON)).andReturn();
 
         verify(clienteService, times(1)).eliminarCliente("CL-00003");
 
